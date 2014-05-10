@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * the three-arity specialization of {@link Consumer}. Unlike most other functional interfaces,
  * {@code TriConsumer} is expected to operate via side-effects.
  * <p>
- * This is a <a href="package-summary.html">functional interface</a> whose functional method is
+ * This is a {@link FunctionalInterface} whose functional method is
  * {@link #accept(Object, Object, Object)}.
  * </p>
  * 
