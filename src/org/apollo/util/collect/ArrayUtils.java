@@ -12,17 +12,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A class which provides static utility methods for arrays. This class is supposed to function
- * as an addition to the {@link java.util.Arrays} class, not as a replacement.
+ * A class that provides various static utility methods for arrays. This class is supposed to
+ * function as an addition to the {@link java.util.Arrays} class, not as a replacement.
  * 
  * @author Chris Fletcher
  */
 public final class ArrayUtils {
-
-    /**
-     * A constant for a zero-length {@code int} array.
-     */
-    public static final int[] EMPTY_INT = new int[0];
 
     /**
      * Empirically determined point at which the average cost of a JNI call exceeds the expense
@@ -70,9 +65,8 @@ public final class ArrayUtils {
     @SafeVarargs
     public static <T> void forEach(Consumer<? super T> action, T... array) {
 	Objects.requireNonNull(action);
-	for (T t : array) {
+	for (T t : array)
 	    action.accept(t);
-	}
     }
 
     /**
@@ -91,9 +85,8 @@ public final class ArrayUtils {
 	Objects.requireNonNull(action);
 
 	int length = array.length;
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++)
 	    action.accept(i, array[i]);
-	}
     }
 
     /**
@@ -113,31 +106,10 @@ public final class ArrayUtils {
 
 	@SuppressWarnings("unchecked")
 	T[] array = (T[]) newInstance(defaultValue.getClass(), length);
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++)
 	    array[i] = defaultValue;
-	}
-	return array;
-    }
 
-    /**
-     * Replaces a specific index within an array with the specified replacement.
-     * 
-     * @param array
-     *            The array to be altering.
-     * @param index
-     *            The index within the array.
-     * @param replacement
-     *            The object that will be replacing the object currently found at the specified
-     *            index.
-     * @return The object that was previously found at the specified index ({@code null} if
-     *         none was).
-     * @throws ArrayIndexOutOfBoundsException
-     *             if the specified index is out of bounds.
-     */
-    public static <T> T replace(T[] array, int index, T replacement) {
-	T old = array[index];
-	array[index] = replacement;
-	return old;
+	return array;
     }
 
     /**
@@ -164,11 +136,32 @@ public final class ArrayUtils {
 	    return new int[] { defaultValue, defaultValue, defaultValue };
 	default:
 	    final int[] array = new int[length];
-	    for (int i = 0; i < length; i++) {
+	    for (int i = 0; i < length; i++)
 		array[i] = defaultValue;
-	    }
+
 	    return array;
 	}
+    }
+
+    /**
+     * Replaces a specific index within an array with the specified replacement.
+     * 
+     * @param array
+     *            The array to be altering.
+     * @param index
+     *            The index within the array.
+     * @param replacement
+     *            The object that will be replacing the object currently found at the specified
+     *            index.
+     * @return The object that was previously found at the specified index ({@code null} if
+     *         none was).
+     * @throws ArrayIndexOutOfBoundsException
+     *             if the specified index is out of bounds.
+     */
+    public static <T> T replace(T[] array, int index, T replacement) {
+	T old = array[index];
+	array[index] = replacement;
+	return old;
     }
 
     /**
@@ -225,16 +218,14 @@ public final class ArrayUtils {
     @SafeVarargs
     public static <T> T[] concat(T[]... arrays) {
 	int length = arrays.length;
-	if (length == 0) {
+	if (length == 0)
 	    return (T[]) new Object[0];
-	} else if (length == 1) {
+	else if (length == 1)
 	    return arrays[0].clone();
-	}
 
 	length = 0;
-	for (T[] array : arrays) {
+	for (T[] array : arrays)
 	    length += array.length;
-	}
 
 	Class<?> type = arrays.getClass().getComponentType().getComponentType();
 	final T[] result = (T[]) newInstance(type, length);
@@ -242,9 +233,9 @@ public final class ArrayUtils {
 	for (T[] array : arrays) {
 	    int len = array.length;
 
-	    if (len == 0) {
+	    if (len == 0)
 		continue;
-	    } else if (len == 1) {
+	    if (len == 1) {
 		result[offset++] = array[0];
 		continue;
 	    }
@@ -252,6 +243,34 @@ public final class ArrayUtils {
 	    arraycopy(array, 0, result, offset, len);
 	    offset += len;
 	}
+	return result;
+    }
+
+    /**
+     * Uses the specified {@link Function} to convert the specified array of type {@code S} to
+     * a primitive-{@code int} array.
+     * 
+     * @param converter
+     *            The function that converts the element types.
+     * @param array
+     *            The array that needs to be converted.
+     * @return The converted array.
+     */
+    @SafeVarargs
+    public static <S> int[] convert(Function<S, Integer> converter, S... array) {
+	int length = array.length;
+	int[] result = new int[length];
+
+	if (length == 0)
+	    return result;
+	if (length == 1) {
+	    result[0] = converter.apply(array[0]);
+	    return result;
+	}
+
+	for (int i = 0; i < length; i++)
+	    result[i] = converter.apply(array[i]);
+
 	return result;
     }
 
@@ -273,16 +292,16 @@ public final class ArrayUtils {
 	int length = array.length;
 	D[] result = (D[]) newInstance(type, length);
 
-	if (length == 0) {
+	if (length == 0)
 	    return result;
-	} else if (length == 1) {
+	if (length == 1) {
 	    result[0] = converter.apply(array[0]);
 	    return result;
 	}
 
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++)
 	    result[i] = converter.apply(array[i]);
-	}
+
 	return result;
     }
 
@@ -302,30 +321,26 @@ public final class ArrayUtils {
     @SafeVarargs
     public static <S, D> D[] convert(Class<D> type, Function<S, D> converter, S[]... arrays) {
 	int length = arrays.length;
-	if (length == 1) {
+	if (length == 1)
 	    return convert(type, converter, arrays[0]);
-	}
 
 	D[] result = (D[]) newInstance(type, length);
-	if (length == 0) {
+	if (length == 0)
 	    return result;
-	}
 
 	length = 0;
-	for (S[] array : arrays) {
+	for (S[] array : arrays)
 	    length += array.length;
-	}
 
 	int offset = 0;
 	for (S[] array : arrays) {
 	    length = array.length;
-	    if (length == 0) {
+	    if (length == 0)
 		continue;
-	    }
 
-	    for (int i = offset; i < length; i++) {
+	    for (int i = offset; i < length; i++)
 		result[offset + 1] = converter.apply(array[i]);
-	    }
+
 	    offset += length;
 	}
 	return result;
@@ -360,12 +375,11 @@ public final class ArrayUtils {
 	    sb.append(first).append(delimiter);
 	    for (int i = 1; i < length; i++) {
 		sb.append(array[i]);
-		if (i == last) {
+		if (i == last)
 		    return sb.toString();
-		}
-		if (delimiter != null) {
+
+		if (delimiter != null)
 		    sb.append(delimiter);
-		}
 	    }
 	}
 	throw new IllegalStateException();
@@ -400,12 +414,11 @@ public final class ArrayUtils {
 	    sb.append(first).append(delimiter);
 	    for (int i = 1; i < length; i++) {
 		sb.append(array[i]);
-		if (i == last) {
+		if (i == last)
 		    return sb.toString();
-		}
-		if (delimiter != null) {
+
+		if (delimiter != null)
 		    sb.append(delimiter);
-		}
 	    }
 	}
 	throw new IllegalStateException();
@@ -440,12 +453,11 @@ public final class ArrayUtils {
 	    sb.append(first).append(delimiter);
 	    for (int i = 1; i < length; i++) {
 		sb.append(array[i]);
-		if (i == last) {
+		if (i == last)
 		    return sb.toString();
-		}
-		if (delimiter != null) {
+
+		if (delimiter != null)
 		    sb.append(delimiter);
-		}
 	    }
 	}
 	throw new IllegalStateException();
@@ -463,12 +475,12 @@ public final class ArrayUtils {
      */
     @SafeVarargs
     public static <T> boolean search(final T value, final T... array) {
-	if (array.length == 0) {
+	if (array.length == 0)
 	    return false;
-	}
-	if (value == null) {
+
+	if (value == null)
 	    return Stream.of(array).anyMatch(e -> e == null);
-	}
+
 	return Stream.of(array).anyMatch(e -> e != null && e.equals(value));
     }
 
@@ -501,9 +513,8 @@ public final class ArrayUtils {
 	default:
 	    int count = 0;
 	    for (T t : array) {
-		if (t == null) {
+		if (t == null)
 		    count++;
-		}
 	    }
 	    return count;
 	}
@@ -541,9 +552,8 @@ public final class ArrayUtils {
 	default:
 	    AtomicInteger count = new AtomicInteger();
 	    Arrays.stream(array).parallel().forEach(element -> {
-		if (element == null) {
+		if (element == null)
 		    count.incrementAndGet();
-		}
 	    });
 	    return count.intValue();
 	}
